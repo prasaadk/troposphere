@@ -1,8 +1,3 @@
-# Copyright (c) 2013, Mark Peek <mark@peek.org>
-# All rights reserved.
-#
-# See LICENSE file for full license.
-
 from . import AWSObject, AWSProperty
 from .validators import boolean, integer
 
@@ -124,4 +119,27 @@ class UserPoolUserToGroupAttachment(AWSObject):
       'GroupName' : (basestring,True),
       'Username' : (basestring,True),
       'UserPoolId' : (basestring,True)
+    }
+
+class CognitoIdentityProvider(AWSProperty):
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cognito-identitypool-cognitoidentityprovider.html
+    props = {
+        'ClientId': (basestring, False),
+        'ProviderName': (basestring, False),
+        'ServerSideTokenCheck': (boolean, False)
+    }
+
+class CognitoStreams(AWSProperty):
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cognito-identitypool-cognitostreams.html
+    props = {
+        'RoleArn': (basestring, False),
+        'StreamingStatus': (basestring, False),
+        'StreamName': (basestring, False)
+    }
+
+class PushSync(AWSProperty):
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cognito-identitypool-pushsync.html
+    props = {
+        'ApplicationArns': (list, False),
+        'RoleArn': (basestring, False)
     }
