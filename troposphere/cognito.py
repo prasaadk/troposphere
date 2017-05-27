@@ -1,13 +1,16 @@
 from . import AWSObject, AWSProperty
-from .validators import boolean, integer
+from .validators import boolean, integer, positive_integer, string_length_range, string_list_item
+from .constants import AMBIGUOUS_ROLE_RESOLUTION_VALUES as ROLE_RESOLUTION_VALUES,
+                       MATCH_TYPE, MFA_CONFIGURATION, EXPLICIT_AUTH_FLOWS, DESIRED_DELIVERY_MEDIUMS,
+                       MESSAGE_ACTION
 
 class IdentityPool(AWSObject):
     resource_type = "AWS::Cognito::IdentityPool"
 
     props = {
-        'IdentityPoolName': (basestring, False),
+        'IdentityPoolName': (string_length_range(1, 128), False),
         'AllowUnauthenticatedIdentities': (boolean, True),
-        'DeveloperProviderName': (basestring, False),
+        'DeveloperProviderName': (string_length_range(1, 100), False),
         'SupportedLoginProviders': (dict, False),
         'CognitoIdentityProviders': ([CognitoIdentityProvider], False),
         'SamlProviderARNs': (list, False),
@@ -48,7 +51,7 @@ class UserPool(AWSObject):
         'EmailVerificationMessage' : (basestring,False),
         'EmailVerificationSubject' : (basestring,False),
         'LambdaConfig' : (LambdaConfig,False),
-        'MfaConfiguration' : (basestring,False),
+        'MfaConfiguration' : (string_list_item(MFA_CONFIGURATION),False),
         'Policies' : (Policies,False),
         'UserPoolName' : (basestring,True),
         'Schema' : ([SchemaAttribute],False),
@@ -68,8 +71,8 @@ class UserPoolClient(AWSObject):
     resource_type = "AWS::Cognito::UserPoolClient"
 
     props = {
-        'ClientName' : (basestring,False),
-        'ExplicitAuthFlows' : ([basestring],False),
+        'ClientName' : (string_length_range(1,128),False),
+        'ExplicitAuthFlows' : ([string_list_item(EXPLICIT_AUTH_FLOWS)],False),
         'GenerateSecret' : (boolean,False),
         'ReadAttributes' : ([basestring],False),
         'RefreshTokenValidity' : (integer,False),
@@ -87,9 +90,9 @@ class UserPoolGroup(AWSObject):
     resource_type = "AWS::Cognito::UserPoolGroup"
 
     props = {
-        'Description' : (basestring,False),
+        'Description' : (string_length_range(0,2048),False),
         'GroupName' : (basestring,True),
-        'Precedence' : (number,False),
+        'Precedence' : (positive_integer,False),
         'RoleArn' : (basestring,False),
         'UserPoolId' : (basestring,True)
     }
@@ -99,11 +102,11 @@ class UserPoolUser(AWSObject):
     resource_type = "AWS::Cognito::UserPoolUser"
 
     props = {
-      'DesiredDeliveryMediums' : ([basestring],False),
+      'DesiredDeliveryMediums' : ([string_list_item(DESIRED_DELIVERY_MEDIUMS)],False),
       'ForceAliasCreation' : (boolean,False),
       'UserAttributes' : ([AttributeType],False),
-      'MessageAction' : (basestring,False),
-      'Username' : (basestring,False),
+      'MessageAction' : (string_list_item(MESSAGE_ACTION),False),
+      'Username' : (string_length_range(1,128),False),
       'UserPoolId' : (basestring,True),
       'ValidationData' : ([AttributeType],False)
     }
@@ -143,6 +146,15 @@ class PushSync(AWSProperty):
     props = {
         'ApplicationArns': (list, False),
         'RoleArn': (basestring, False)
+    }
+
+# ----- Properties for AWSObject IdentityPoolRoleAttachment ------
+class RoleMapping(AWSProperty):
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cognito-identitypoolroleattachment-rolemapping.html
+    props = {
+        'AmbiguousRoleResolution': (string_list_item(ROLE_RESOLUTION_VALUES), False),
+        'RulesConfiguration': (RulesConfiguration, False),
+        'ServerSideTokenCheck': (boolean, False)
     }
 
 # ----- Properties for AWSObject UserPool ------
@@ -247,4 +259,20 @@ class StringAttributeConstraints(AWSProperty):
     props = {
         'MaxLength': (basestring, False),
         'MinLength': (basestring, False)
+    }
+
+# ----- Properties for AWSProperty RoleMapping ------
+class RulesConfiguration(AWSProperty):
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cognito-identitypoolroleattachment-rolemapping-rulesconfiguration.html
+    props = {
+        'Rules': ([MappingRule], True)
+    }
+
+class MappingRule(AWSProperty):
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cognito-identitypoolroleattachment-mappingrule.html
+    props = {
+        'Claim': (basestring, True),
+        'MatchType': (string_list_item(MATCH_TYPE), True),
+        'RoleARN': (basestring, True),
+        'Value': (basestring, True)
     }
