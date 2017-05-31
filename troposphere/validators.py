@@ -39,6 +39,7 @@ def integer_range(minimum_val, maximum_val):
 
     return integer_range_checker
 
+
 def string_length_range(minimum_val, maximum_val):
     def string_length_range_checker(value):
         string_value = str(value)
@@ -48,6 +49,7 @@ def string_length_range(minimum_val, maximum_val):
         return value
 
     return string_length_range_checker
+
 
 def integer_list_item(allowed_values):
     def integer_list_item_checker(x):
@@ -59,15 +61,17 @@ def integer_list_item(allowed_values):
 
     return integer_list_item_checker
 
-def string_list_item(allowed_values):
-    def string_list_item_checker(value):
+
+def string_keys(allowed_values):
+    def string_key_checker(value):
         i = str(value)
         if i in allowed_values:
-            return x
+            return value
         raise ValueError('String must be one of following: %s' %
                          ', '.join(str(j) for j in allowed_values))
 
-    return integer_list_item_checker
+    return string_key_checker
+
 
 def network_port(x):
     from . import AWSHelperFn
