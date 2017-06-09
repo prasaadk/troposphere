@@ -40,6 +40,17 @@ def integer_range(minimum_val, maximum_val):
     return integer_range_checker
 
 
+def string_length_range(minimum_val, maximum_val):
+    def string_length_range_checker(value):
+        string_value = str(value)
+        if len(string_value) < minimum_val or len(string_value) > maximum_val:
+            raise ValueError('String length must be between %d and %d' % (
+                minimum_val, maximum_val))
+        return value
+
+    return string_length_range_checker
+
+
 def integer_list_item(allowed_values):
     def integer_list_item_checker(x):
         i = positive_integer(x)
@@ -49,6 +60,17 @@ def integer_list_item(allowed_values):
                          ', '.join(str(j) for j in allowed_values))
 
     return integer_list_item_checker
+
+
+def string_keys(allowed_values):
+    def string_key_checker(value):
+        i = str(value)
+        if i in allowed_values:
+            return value
+        raise ValueError('String must be one of following: %s' %
+                         ', '.join(str(j) for j in allowed_values))
+
+    return string_key_checker
 
 
 def network_port(x):
